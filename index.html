@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Stok Takip</title>
+<style>
+:root{--bg:#eef1f4;--card:#fff;--ink:#1b2733;--mute:#5d6b79;--line:#d5dce3;--acc:#0f766e;--acc-ink:#fff;--warn:#b45309;--warn-bg:#fef3c7;--bad:#b91c1c;--bad-bg:#fee2e2;color-scheme:light}
+@media(prefers-color-scheme:dark){:root{--bg:#10171e;--card:#18222c;--ink:#e6ecf1;--mute:#93a2b0;--line:#2b3946;--acc:#2dd4bf;--acc-ink:#062b27;--warn:#fbbf24;--warn-bg:#3a2d0a;--bad:#f87171;--bad-bg:#3b1414;color-scheme:dark}}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+input,select{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 12px;width:100%}
+input:focus,select:focus,button:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+button{font:inherit;cursor:pointer}
+h1{font-size:22px;margin:0}h2{margin:0;font-size:18px}
+.wrap{max-width:560px;margin:0 auto;padding:16px}
+.box{display:grid;gap:12px;margin-top:12vh}
+.pri{background:var(--acc);color:var(--acc-ink);border:0;border-radius:8px;padding:12px;font-weight:600}
+.lnk{background:none;border:0;color:var(--acc);padding:6px}
+.ghost{background:none;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:6px 12px;font-size:14px}
+.muted{color:var(--mute);font-size:14px;margin:0}
+header{position:sticky;top:0;background:var(--bg);padding:12px 16px 10px;border-bottom:1px solid var(--line);z-index:5}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
+.acts{display:flex;gap:6px}
+main{display:grid;gap:10px;padding:12px 16px 96px;max-width:560px;margin:0 auto}
+.part{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:grid;grid-template-columns:1fr auto;gap:8px 12px;align-items:center}
+.part.low{border-left:4px solid var(--warn)}.part.zero{border-left:4px solid var(--bad)}
+.info{cursor:pointer}.name{font-weight:600;margin:0}.meta{font-size:13px;color:var(--mute);margin:2px 0 0}
+.tag{display:inline-block;font-size:12px;font-weight:500;border-radius:6px;padding:1px 8px;margin-top:6px}
+.tag.low{background:var(--warn-bg);color:var(--warn)}.tag.zero{background:var(--bad-bg);color:var(--bad)}
+.qty{display:flex;align-items:center;gap:6px}.qty b{min-width:42px;text-align:center;font-size:20px;font-variant-numeric:tabular-nums}
+.sq{width:42px;height:42px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:22px}
+.fab{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0));background:var(--acc);color:var(--acc-ink);border:0;border-radius:999px;padding:14px 22px;font-weight:600;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.empty{text-align:center;color:var(--mute);padding:40px 12px}
+.sheet{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:flex-end;z-index:20}.sheet.open{display:flex}
+.panel{background:var(--bg);width:100%;max-width:560px;margin:0 auto;border-radius:16px 16px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0));display:grid;gap:12px;max-height:90vh;overflow-y:auto}
+label{display:grid;gap:4px;font-size:14px;color:var(--mute)}
+.row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btns{display:flex;gap:10px}.btns button{flex:1;padding:12px;border-radius:8px;font-weight:600;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+.btns .ok{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}.btns .del{color:var(--bad)}
+.urow{display:grid;grid-template-columns:1fr 130px;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)}
+.urow span{overflow-wrap:anywhere;font-size:14px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0));background:#1b2733;color:#fff;padding:10px 14px;border-radius:10px;font-size:14px;display:none;z-index:30;max-width:92vw}
+.toast.show{display:block}.toast.bad{background:#991b1b}
+</style>
+</head>
+<body>
+
+<section id="auth" hidden><div class="wrap"><div class="box">
+  <h1>Stok Takip</h1>
+  <h2 id="ttl">Giriş yap</h2>
+  <input id="em" type="email" placeholder="E-posta" autocomplete="username">
+  <input id="pw" type="password" placeholder="Şifre (en az 6 karakter)" autocomplete="current-password">
+  <button class="pri" id="go">Giriş yap</button>
+  <button class="lnk" id="swap">Hesabım yok, kayıt ol</button>
+</div></div></section>
+
+<section id="pending" hidden><div class="wrap"><div class="box">
+  <h1>Onay bekleniyor</h1>
+  <p class="muted"><span id="pmail"></span> hesabı oluşturuldu. Yönetici seni personel olarak onaylayınca stoğu görebilirsin.</p>
+  <button class="pri" id="recheck">Tekrar kontrol et</button>
+  <button class="lnk" id="out1">Çıkış yap</button>
+</div></div></section>
+
+<section id="app" hidden>
+  <header>
+    <div class="top"><div><h1>Stok Takip</h1><p class="muted" id="role"></p></div>
+      <div class="acts"><button class="ghost" id="usersBtn" hidden>Kullanıcılar</button><button class="ghost" id="out2">Çıkış</button></div></div>
+    <input id="q" type="search" placeholder="Parça, kategori, konum veya barkod ara" aria-label="Ara">
+  </header>
+  <main id="list"></main>
+  <button class="fab" id="add">+ Parça ekle</button>
+</section>
+
+<div class="sheet" id="sheet"><div class="panel" role="dialog" aria-modal="true">
+  <h2 id="sttl">Parça ekle</h2>
+  <label>Parça adı<input id="f-name" autocomplete="off"></label>
+  <div class="row2"><label>Barkod<input id="f-code" autocomplete="off"></label><label>Kategori<input id="f-cat" autocomplete="off"></label></div>
+  <label>Konum<input id="f-loc" autocomplete="off" placeholder="A12-Ç2"></label>
+  <div class="row"><label>Miktar<input id="f-qty" type="number" inputmode="numeric" min="0" value="0"></label><label>Alt limit<input id="f-min" type="number" inputmode="numeric" min="0" value="0"></label><label>Birim<input id="f-unit" value="adet"></label></div>
+  <div class="btns"><button id="b-del" class="del" hidden>Sil</button><button id="b-cancel">Vazgeç</button><button id="b-save" class="ok">Kaydet</button></div>
+</div></div>
+
+<div class="sheet" id="usheet"><div class="panel" role="dialog" aria-modal="true">
+  <h2>Kullanıcılar</h2>
+  <div id="ulist"></div>
+  <p class="muted">Beklemede olanları personel yap. Yöneticiler her şeyi yapabilir, personel parça silemez.</p>
+  <div class="btns"><button id="u-close" class="ok">Bitti</button></div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+const SB_URL="https://uebfkqitqpmszyguwncd.supabase.co",SB_KEY="sb_publishable_TQHbkv27VS_1-OnWdEK4VA_IuV7I2ht";
+const $=i=>document.getElementById(i);
+const esc=t=>String(t==null?"":t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let sb,me=null,parts=[],editId=null,reg=false,live=false;
+
+function show(v){["auth","pending","app"].forEach(x=>$(x).hidden=x!==v)}
+function msg(t,bad){const e=$("toast");e.textContent=t;e.className="toast show"+(bad?" bad":"");clearTimeout(msg.t);msg.t=setTimeout(()=>e.className="toast",4000)}
+const status=p=>p.qty<=0?"zero":(p.qty<=p.min?"low":"");
+
+async function enter(user){
+  const {data,error}=await sb.from("profiles").select("*").eq("id",user.id).maybeSingle();
+  if(error||!data){msg("Profil okunamadı: "+(error?error.message:"kayıt yok"),true);show("auth");return}
+  me=data;
+  if(me.role==="pending"){$("pmail").textContent=me.email;show("pending");return}
+  $("role").textContent=me.role==="admin"?"Yönetici":"Personel";
+  $("usersBtn").hidden=me.role!=="admin";$("b-del").hidden=me.role!=="admin"||!editId;
+  show("app");await load();
+  if(!live){live=true;sb.channel("parts-live").on("postgres_changes",{event:"*",schema:"public",table:"parts"},load).subscribe()}
+}
+async function load(){
+  const {data,error}=await sb.from("parts").select("*").order("name");
+  if(error){msg("Liste alınamadı: "+error.message,true);return}
+  parts=data||[];render();
+}
+function render(){
+  const t=$("q").value.toLowerCase().trim();
+  const shown=parts.filter(p=>(p.name+" "+p.cat+" "+p.loc+" "+p.code).toLowerCase().includes(t));
+  $("list").innerHTML=shown.length?shown.map(p=>{const s=status(p);
+    return `<div class="part ${s}"><div class="info" data-edit="${p.id}"><p class="name">${esc(p.name)}</p><p class="meta">${esc(p.cat||"Kategorisiz")}${p.loc?" · "+esc(p.loc):""} · ${esc(p.unit||"adet")}${p.code?" · "+esc(p.code):""}</p>${s?`<span class="tag ${s}">${s==="zero"?"Stok bitti":"Azalıyor, limit "+p.min}</span>`:""}</div>
+    <div class="qty"><button class="sq" data-d="-1" data-id="${p.id}" aria-label="Azalt">−</button><b>${p.qty}</b><button class="sq" data-d="1" data-id="${p.id}" aria-label="Artır">+</button></div></div>`}).join(""):
+    `<div class="empty">${parts.length?"Aramayla eşleşen parça yok.":"Henüz parça yok. Başlamak için “Parça ekle”ye dokun."}</div>`;
+}
+async function adj(id,d){
+  const p=parts.find(x=>x.id===id);if(!p)return;const q=Math.max(0,p.qty+d);if(q===p.qty)return;
+  const old=p.qty;p.qty=q;render();
+  const {error}=await sb.from("parts").update({qty:q,updated_at:new Date().toISOString()}).eq("id",id);
+  if(error){p.qty=old;render();msg("Kaydedilemedi: "+error.message,true)}
+}
+function openSheet(id){
+  editId=id;const p=parts.find(x=>x.id===id)||{name:"",code:"",cat:"",loc:"",qty:0,min:0,unit:"adet"};
+  $("sttl").textContent=id?"Parçayı düzenle":"Parça ekle";
+  $("f-name").value=p.name;$("f-code").value=p.code||"";$("f-cat").value=p.cat||"";$("f-loc").value=p.loc||"";$("f-qty").value=p.qty;$("f-min").value=p.min;$("f-unit").value=p.unit||"adet";
+  $("b-del").hidden=!(id&&me.role==="admin");$("sheet").classList.add("open");$("f-name").focus();
+}
+const closeSheet=()=>$("sheet").classList.remove("open");
+async function savePart(){
+  const name=$("f-name").value.trim();if(!name){$("f-name").focus();return}
+  const d={name,code:$("f-code").value.trim(),cat:$("f-cat").value.trim(),loc:$("f-loc").value.trim(),qty:Math.max(0,parseInt($("f-qty").value)||0),min:Math.max(0,parseInt($("f-min").value)||0),unit:$("f-unit").value.trim()||"adet",updated_at:new Date().toISOString()};
+  const r=editId?await sb.from("parts").update(d).eq("id",editId):await sb.from("parts").insert(d);
+  if(r.error){msg("Kaydedilemedi: "+r.error.message,true);return}
+  closeSheet();load();
+}
+async function delPart(){
+  if(!editId||!confirm("Bu parça silinsin mi?"))return;
+  const {error}=await sb.from("parts").delete().eq("id",editId);
+  if(error){msg("Silinemedi: "+error.message,true);return}
+  closeSheet();load();
+}
+async function openUsers(){
+  const {data,error}=await sb.from("profiles").select("*").order("created_at");
+  if(error){msg("Kullanıcılar alınamadı: "+error.message,true);return}
+  const rank={pending:0,staff:1,admin:2};
+  $("ulist").innerHTML=data.sort((a,b)=>rank[a.role]-rank[b.role]).map(u=>`<div class="urow"><span>${esc(u.email)}${u.id===me.id?" (sen)":""}</span><select data-uid="${u.id}" ${u.id===me.id?"disabled":""}><option value="pending" ${u.role==="pending"?"selected":""}>Beklemede</option><option value="staff" ${u.role==="staff"?"selected":""}>Personel</option><option value="admin" ${u.role==="admin"?"selected":""}>Yönetici</option></select></div>`).join("");
+  $("usheet").classList.add("open");
+}
+
+$("go").onclick=async()=>{
+  const email=$("em").value.trim(),pw=$("pw").value;
+  if(!email||pw.length<6){msg("E-posta ve en az 6 karakterli şifre gir",true);return}
+  $("go").disabled=true;
+  const r=reg?await sb.auth.signUp({email,password:pw}):await sb.auth.signInWithPassword({email,password:pw});
+  $("go").disabled=false;
+  if(r.error){msg(r.error.message,true);return}
+  if(r.data.session)enter(r.data.user);else msg("Kayıt alındı. E-postana gelen bağlantıyla hesabı doğrula, sonra giriş yap.");
+};
+$("pw").onkeydown=e=>{if(e.key==="Enter")$("go").click()};
+$("swap").onclick=()=>{reg=!reg;$("go").textContent=reg?"Kayıt ol":"Giriş yap";$("ttl").textContent=reg?"Kayıt ol":"Giriş yap";$("swap").textContent=reg?"Hesabım var, giriş yap":"Hesabım yok, kayıt ol"};
+const logout=async()=>{await sb.auth.signOut();location.reload()};
+$("out1").onclick=logout;$("out2").onclick=logout;
+$("recheck").onclick=async()=>{const {data}=await sb.auth.getUser();if(data&&data.user)enter(data.user)};
+$("q").oninput=render;
+$("add").onclick=()=>openSheet(null);
+$("b-cancel").onclick=closeSheet;$("b-save").onclick=savePart;$("b-del").onclick=delPart;
+$("sheet").onclick=e=>{if(e.target===$("sheet"))closeSheet()};
+$("list").onclick=e=>{
+  const b=e.target.closest("button[data-d]");if(b){adj(+b.dataset.id,+b.dataset.d);return}
+  const i=e.target.closest("[data-edit]");if(i)openSheet(+i.dataset.edit);
+};
+$("usersBtn").onclick=openUsers;
+$("u-close").onclick=()=>$("usheet").classList.remove("open");
+$("usheet").onclick=e=>{if(e.target===$("usheet"))$("usheet").classList.remove("open")};
+$("ulist").onchange=async e=>{
+  const id=e.target.dataset.uid;if(!id)return;
+  const {error}=await sb.from("profiles").update({role:e.target.value}).eq("id",id);
+  if(error)msg("Değiştirilemedi: "+error.message,true);else msg("Yetki güncellendi");
+};
+
+(async()=>{
+  if(typeof supabase==="undefined"){show("auth");msg("Supabase kütüphanesi yüklenemedi. İnternet bağlantını kontrol et.",true);return}
+  sb=supabase.createClient(SB_URL,SB_KEY);
+  const {data}=await sb.auth.getSession();
+  if(data.session)enter(data.session.user);else show("auth");
+})();
+</script>
+</body>
+</html>
