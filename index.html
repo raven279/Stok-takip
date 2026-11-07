@@ -4,49 +4,79 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Stok Takip</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <style>
-:root{--bg:#eef1f4;--card:#fff;--ink:#1b2733;--mute:#5d6b79;--line:#d5dce3;--acc:#0f766e;--acc-ink:#fff;--warn:#b45309;--warn-bg:#fef3c7;--bad:#b91c1c;--bad-bg:#fee2e2;color-scheme:light}
-@media(prefers-color-scheme:dark){:root{--bg:#10171e;--card:#18222c;--ink:#e6ecf1;--mute:#93a2b0;--line:#2b3946;--acc:#2dd4bf;--acc-ink:#062b27;--warn:#fbbf24;--warn-bg:#3a2d0a;--bad:#f87171;--bad-bg:#3b1414;color-scheme:dark}}
+:root{--bg:#f5f7fa;--card:#fff;--ink:#0b1220;--mute:#667085;--line:#e4e8ef;--acc:#0b84f3;--acc-ink:#fff;--soft:#eaf3fe;--warn:#b45309;--warn-bg:#fff4d6;--bad:#c62828;--bad-bg:#fde8e8;--sh:0 1px 2px rgba(16,24,40,.05),0 4px 14px rgba(16,24,40,.06);color-scheme:light}
+@media(prefers-color-scheme:dark){:root{--bg:#0a0e14;--card:#121923;--ink:#eef2f7;--mute:#93a1b3;--line:#222d3b;--acc:#3b9cff;--acc-ink:#04111f;--soft:#102a45;--warn:#fbbf24;--warn-bg:#3a2d0a;--bad:#ff7a7a;--bad-bg:#3b1616;--sh:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.35);color-scheme:dark}}
 *{box-sizing:border-box}[hidden]{display:none!important}
-body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
-input,select{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 12px;width:100%}
-input:focus,select:focus,button:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
-button{font:inherit;cursor:pointer}
-h1{font-size:22px;margin:0}h2{margin:0;font-size:18px}
-.wrap{max-width:560px;margin:0 auto;padding:16px}
-.box{display:grid;gap:12px;margin-top:12vh}
-.pri{background:var(--acc);color:var(--acc-ink);border:0;border-radius:8px;padding:12px;font-weight:600}
-.lnk{background:none;border:0;color:var(--acc);padding:6px}
-.ghost{background:none;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:6px 12px;font-size:14px}
-.muted{color:var(--mute);font-size:14px;margin:0}
-header{position:sticky;top:0;background:var(--bg);padding:12px 16px 10px;border-bottom:1px solid var(--line);z-index:5}
-.top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.45 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+input,select{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px 13px;width:100%;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus{outline:0;border-color:var(--acc);box-shadow:0 0 0 3px var(--soft)}
+button{font:inherit;cursor:pointer;transition:transform .1s,background .15s,box-shadow .15s}button:active{transform:scale(.97)}
+button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+h1{font-size:22px;font-weight:700;letter-spacing:-.02em;margin:0}h2{margin:0;font-size:18px;font-weight:600;letter-spacing:-.01em}
+.logo,.top h1::before{width:30px;height:30px;border-radius:9px;background:var(--acc) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 8l-9-5-9 5v8l9 5 9-5z'/%3E%3Cpath d='M3 8l9 5 9-5M12 13v8'/%3E%3C/svg%3E") center/18px no-repeat;flex:none}
+.logo{width:52px;height:52px;border-radius:15px;background-size:28px;box-shadow:0 8px 20px rgba(11,132,243,.3)}
+.top h1{display:flex;align-items:center;gap:10px}.top h1::before{content:""}
+.wrap{max-width:440px;margin:0 auto;padding:16px}
+.box{display:grid;gap:14px;margin-top:9vh;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:26px 22px;box-shadow:var(--sh)}
+.pri{background:var(--acc);color:var(--acc-ink);border:0;border-radius:11px;padding:13px;font-weight:600;box-shadow:0 4px 14px rgba(11,132,243,.28)}
+.pri:disabled{opacity:.6}
+.lnk{background:none;border:0;color:var(--acc);padding:6px;font-weight:500}
+.ghost{background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:7px 13px;font-size:14px;font-weight:500}
+.ghost:hover{background:var(--soft)}
+.muted{color:var(--mute);font-size:13px;margin:0}
+header{position:sticky;top:0;background:color-mix(in srgb,var(--bg) 86%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);padding:14px 16px 12px;border-bottom:1px solid var(--line);z-index:5}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}
+.top .muted{margin:2px 0 0 40px}
 .acts{display:flex;gap:6px}
-main{display:grid;gap:10px;padding:12px 16px 96px;max-width:560px;margin:0 auto}
-.part{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:grid;grid-template-columns:1fr auto;gap:8px 12px;align-items:center}
-.part.low{border-left:4px solid var(--warn)}.part.zero{border-left:4px solid var(--bad)}
-.info{cursor:pointer}.name{font-weight:600;margin:0}.meta{font-size:13px;color:var(--mute);margin:2px 0 0}
-.tag{display:inline-block;font-size:12px;font-weight:500;border-radius:6px;padding:1px 8px;margin-top:6px}
+.tabs{display:flex;gap:2px;margin-bottom:12px;background:color-mix(in srgb,var(--mute) 14%,transparent);border-radius:12px;padding:3px}
+.tabs button{flex:1;border:0;background:none;color:var(--mute);font-weight:500;font-size:14px;white-space:nowrap;padding:8px 4px;border-radius:9px}
+.tabs button[aria-pressed="true"]{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(16,24,40,.14)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:12px 0 2px;scrollbar-width:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 14px;font-size:14px;font-weight:500}
+.chip[aria-pressed="true"]{background:var(--soft);color:var(--acc);border-color:var(--acc)}
+main{display:grid;gap:10px;padding:14px 16px 100px;max-width:560px;margin:0 auto}
+.part{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;display:grid;grid-template-columns:1fr auto;gap:8px 12px;align-items:center;box-shadow:var(--sh)}
+.part.low{box-shadow:inset 4px 0 0 var(--warn),var(--sh)}.part.zero{box-shadow:inset 4px 0 0 var(--bad),var(--sh)}
+.info{cursor:pointer}.name{font-weight:600;margin:0;font-size:16px;letter-spacing:-.01em}.meta{font-size:13px;color:var(--mute);margin:3px 0 0}
+.tag{display:inline-block;font-size:12px;font-weight:600;border-radius:999px;padding:2px 10px;margin-top:8px}
 .tag.low{background:var(--warn-bg);color:var(--warn)}.tag.zero{background:var(--bad-bg);color:var(--bad)}
-.qty{display:flex;align-items:center;gap:6px}.qty b{min-width:42px;text-align:center;font-size:20px;font-variant-numeric:tabular-nums}
-.sq{width:42px;height:42px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:22px}
-.fab{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0));background:var(--acc);color:var(--acc-ink);border:0;border-radius:999px;padding:14px 22px;font-weight:600;box-shadow:0 4px 14px rgba(0,0,0,.25)}
-.empty{text-align:center;color:var(--mute);padding:40px 12px}
-.sheet{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:flex-end;z-index:20}.sheet.open{display:flex}
-.panel{background:var(--bg);width:100%;max-width:560px;margin:0 auto;border-radius:16px 16px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0));display:grid;gap:12px;max-height:90vh;overflow-y:auto}
-label{display:grid;gap:4px;font-size:14px;color:var(--mute)}
+.qty{display:flex;align-items:center;gap:4px}.qty b{min-width:44px;text-align:center;font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.sq{width:40px;height:40px;border-radius:12px;border:0;background:var(--soft);color:var(--acc);font-size:22px;font-weight:500}
+.fab{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0));background:var(--acc);color:var(--acc-ink);border:0;border-radius:999px;padding:14px 22px;font-weight:600;box-shadow:0 10px 26px rgba(11,132,243,.38)}
+.empty{text-align:center;color:var(--mute);padding:44px 16px;border:1.5px dashed var(--line);border-radius:16px}
+.sheet{position:fixed;inset:0;background:rgba(8,12,20,.5);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);display:none;align-items:flex-end;z-index:20}.sheet.open{display:flex}
+.panel{background:var(--bg);width:100%;max-width:560px;margin:0 auto;border-radius:22px 22px 0 0;padding:14px 18px calc(20px + env(safe-area-inset-bottom,0));display:grid;gap:14px;max-height:90vh;overflow-y:auto;box-shadow:0 -10px 40px rgba(0,0,0,.2)}
+.panel::before{content:"";width:40px;height:4px;border-radius:4px;background:var(--line);margin:0 auto}
+label{display:grid;gap:5px;font-size:13px;font-weight:500;color:var(--mute)}
 .row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.btns{display:flex;gap:10px}.btns button{flex:1;padding:12px;border-radius:8px;font-weight:600;border:1px solid var(--line);background:var(--card);color:var(--ink)}
-.btns .ok{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}.btns .del{color:var(--bad)}
-.urow{display:grid;grid-template-columns:1fr 130px;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)}
-.urow span{overflow-wrap:anywhere;font-size:14px}
-.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0));background:#1b2733;color:#fff;padding:10px 14px;border-radius:10px;font-size:14px;display:none;z-index:30;max-width:92vw}
-.toast.show{display:block}.toast.bad{background:#991b1b}
+.btns{display:flex;gap:10px}.btns button{flex:1;padding:13px;border-radius:11px;font-weight:600;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+.btns .ok{background:var(--acc);color:var(--acc-ink);border-color:var(--acc);box-shadow:0 4px 14px rgba(11,132,243,.28)}.btns .del{color:var(--bad)}
+.urow{display:grid;grid-template-columns:1fr 130px;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}.urow span{overflow-wrap:anywhere;font-size:14px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(88px + env(safe-area-inset-bottom,0));background:#0b1220;color:#fff;padding:11px 16px;border-radius:12px;font-size:14px;display:none;z-index:30;max-width:92vw;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.toast.show{display:block}.toast.bad{background:#b42318}
+.legend{display:flex;gap:12px;font-size:12px;color:var(--mute);align-items:center;justify-content:space-between;flex-wrap:wrap}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px}
+.fl{display:flex;gap:14px;background:#1c2531;border-radius:18px;padding:14px 10px;box-shadow:var(--sh)}
+.isl{display:flex;gap:3px;background:#dfe5ec;border-radius:11px;padding:4px;min-width:0}
+.col{flex:1;min-width:0;display:grid;gap:3px;align-content:start}
+.hd{text-align:center;font-weight:700;font-size:13px;color:#1b2733;padding:3px 0}
+.cell{height:26px;border:0;border-radius:6px;background:#f8fafc;color:#1b2733;font-size:11px;font-weight:500;padding:0}
+.cell.ok{background:#6ee7b7}.cell.low{background:#fcd34d}.cell.zero{background:#fb7185}
+.dh{margin:0 0 4px;font-size:13px;font-weight:600;color:var(--mute)}
+.srow{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.crow{display:grid;grid-template-columns:1fr auto;gap:8px}
+.arow{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;text-align:left;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:16px;padding:14px 16px;width:100%;box-shadow:inset 4px 0 0 var(--warn),var(--sh)}
+.arow.zero{box-shadow:inset 4px 0 0 var(--bad),var(--sh)}
+.aq{text-align:right}.aq b{font-size:22px;font-weight:700;letter-spacing:-.02em}.aq span{display:block;font-size:12px;color:var(--mute)}
+.arow.zero .aq b{color:var(--bad)}.arow.low .aq b{color:var(--warn)}
 </style>
 </head>
 <body>
 
 <section id="auth" hidden><div class="wrap"><div class="box">
+  <div class="logo"></div>
   <h1>Stok Takip</h1>
   <h2 id="ttl">Giriş yap</h2>
   <input id="em" type="email" placeholder="E-posta" autocomplete="username">
@@ -66,17 +96,21 @@ label{display:grid;gap:4px;font-size:14px;color:var(--mute)}
   <header>
     <div class="top"><div><h1>Stok Takip</h1><p class="muted" id="role"></p></div>
       <div class="acts"><button class="ghost" id="usersBtn" hidden>Kullanıcılar</button><button class="ghost" id="out2">Çıkış</button></div></div>
+    <div class="tabs"><button data-tab="list" aria-pressed="true">Liste</button><button data-tab="plan" aria-pressed="false">Depo planı</button><button data-tab="alerts" aria-pressed="false">Bildirimler <span id="bdg"></span></button></div>
     <input id="q" type="search" placeholder="Parça, kategori, konum veya barkod ara" aria-label="Ara">
+    <div class="chips" id="chips"></div>
   </header>
   <main id="list"></main>
+  <main id="plan" hidden></main>
+  <main id="alerts" hidden></main>
   <button class="fab" id="add">+ Parça ekle</button>
 </section>
 
 <div class="sheet" id="sheet"><div class="panel" role="dialog" aria-modal="true">
   <h2 id="sttl">Parça ekle</h2>
   <label>Parça adı<input id="f-name" autocomplete="off"></label>
-  <div class="row2"><label>Barkod<input id="f-code" autocomplete="off"></label><label>Kategori<input id="f-cat" autocomplete="off"></label></div>
-  <label>Konum<input id="f-loc" autocomplete="off" placeholder="A12-Ç2"></label>
+  <div class="row2"><label>Barkod<input id="f-code" autocomplete="off"></label><label>Kategori<select id="f-cat"></select></label></div>
+  <label>Konum<input id="f-loc" autocomplete="off" placeholder="A12-2"></label>
   <div class="row"><label>Miktar<input id="f-qty" type="number" inputmode="numeric" min="0" value="0"></label><label>Alt limit<input id="f-min" type="number" inputmode="numeric" min="0" value="0"></label><label>Birim<input id="f-unit" value="adet"></label></div>
   <div class="btns"><button id="b-del" class="del" hidden>Sil</button><button id="b-cancel">Vazgeç</button><button id="b-save" class="ok">Kaydet</button></div>
 </div></div>
@@ -86,6 +120,18 @@ label{display:grid;gap:4px;font-size:14px;color:var(--mute)}
   <div id="ulist"></div>
   <p class="muted">Beklemede olanları personel yap. Yöneticiler her şeyi yapabilir, personel parça silemez.</p>
   <div class="btns"><button id="u-close" class="ok">Bitti</button></div>
+</div></div>
+
+<div class="sheet" id="shelfsheet"><div class="panel" role="dialog" aria-modal="true">
+  <h2 id="sh-t"></h2><div id="sh-b" style="display:grid;gap:16px"></div>
+  <p class="muted">+ ve − stoğu değiştirir. “Çıkar” parçayı bu kattan alır ama listede tutar.</p>
+  <div class="btns"><button id="sh-close" class="ok">Bitti</button></div>
+</div></div>
+<div class="sheet" id="catsheet"><div class="panel" role="dialog" aria-modal="true">
+  <h2>Kategoriler</h2><div id="catlist" style="display:grid;gap:8px"></div>
+  <div class="crow"><input id="newcat" placeholder="Yeni kategori adı" autocomplete="off"><button class="ghost" id="addcat">Ekle</button></div>
+  <p class="muted">Silinen kategorideki parçalar silinmez, “Kategorisiz” olur. Adı değiştirmek için kutuya yazıp bitir.</p>
+  <div class="btns"><button id="cat-close" class="ok">Bitti</button></div>
 </div></div>
 
 <div class="toast" id="toast"></div>
@@ -114,11 +160,12 @@ async function enter(user){
 async function load(){
   const {data,error}=await sb.from("parts").select("*").order("name");
   if(error){msg("Liste alınamadı: "+error.message,true);return}
-  parts=data||[];render();
+  parts=data||[];await loadCats();render();
 }
 function render(){
+  extra();
   const t=$("q").value.toLowerCase().trim();
-  const shown=parts.filter(p=>(p.name+" "+p.cat+" "+p.loc+" "+p.code).toLowerCase().includes(t));
+  const shown=parts.filter(p=>(p.name+" "+p.cat+" "+p.loc+" "+p.code).toLowerCase().includes(t)&&(curCat==="Tümü"||p.cat===curCat));
   $("list").innerHTML=shown.length?shown.map(p=>{const s=status(p);
     return `<div class="part ${s}"><div class="info" data-edit="${p.id}"><p class="name">${esc(p.name)}</p><p class="meta">${esc(p.cat||"Kategorisiz")}${p.loc?" · "+esc(p.loc):""} · ${esc(p.unit||"adet")}${p.code?" · "+esc(p.code):""}</p>${s?`<span class="tag ${s}">${s==="zero"?"Stok bitti":"Azalıyor, limit "+p.min}</span>`:""}</div>
     <div class="qty"><button class="sq" data-d="-1" data-id="${p.id}" aria-label="Azalt">−</button><b>${p.qty}</b><button class="sq" data-d="1" data-id="${p.id}" aria-label="Artır">+</button></div></div>`}).join(""):
@@ -130,10 +177,10 @@ async function adj(id,d){
   const {error}=await sb.from("parts").update({qty:q,updated_at:new Date().toISOString()}).eq("id",id);
   if(error){p.qty=old;render();msg("Kaydedilemedi: "+error.message,true)}
 }
-function openSheet(id){
+function openSheet(id,ploc){
   editId=id;const p=parts.find(x=>x.id===id)||{name:"",code:"",cat:"",loc:"",qty:0,min:0,unit:"adet"};
   $("sttl").textContent=id?"Parçayı düzenle":"Parça ekle";
-  $("f-name").value=p.name;$("f-code").value=p.code||"";$("f-cat").value=p.cat||"";$("f-loc").value=p.loc||"";$("f-qty").value=p.qty;$("f-min").value=p.min;$("f-unit").value=p.unit||"adet";
+  $("f-name").value=p.name;$("f-code").value=p.code||"";fillSel(p.cat);$("f-cat").value=p.cat||"";$("f-loc").value=p.loc||ploc||"";$("f-qty").value=p.qty;$("f-min").value=p.min;$("f-unit").value=p.unit||"adet";
   $("b-del").hidden=!(id&&me.role==="admin");$("sheet").classList.add("open");$("f-name").focus();
 }
 const closeSheet=()=>$("sheet").classList.remove("open");
@@ -188,6 +235,75 @@ $("ulist").onchange=async e=>{
   const {error}=await sb.from("profiles").update({role:e.target.value}).eq("id",id);
   if(error)msg("Değiştirilemedi: "+error.message,true);else msg("Yetki güncellendi");
 };
+
+let CATS=[],curCat="Tümü",tab="list",selS=null,flip=false,LIM=100;
+try{LIM=+localStorage.getItem("stok-lim")||100}catch(e){}
+const SH={A:{n:38,d:3},B:{n:38,d:3},C:{n:38,d:2},D:{n:38,d:3},E:{n:38,d:3},F:{n:38,d:3}},ISL=[["A"],["B","C"],["D","E"],["F"]];
+async function loadCats(){const {data}=await sb.from("categories").select("*").order("name");CATS=data||[]}
+function extra(){drawChips();renderPlan();renderAlerts()}
+function fillSel(cur){const n=CATS.map(c=>c.name);if(cur&&!n.includes(cur))n.push(cur);$("f-cat").innerHTML='<option value="">Kategorisiz</option>'+n.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join("")}
+async function upd(id,o){const p=parts.find(x=>x.id===id);if(!p)return;const old={...p};Object.assign(p,o);render();
+  const {error}=await sb.from("parts").update({...o,updated_at:new Date().toISOString()}).eq("id",id);
+  if(error){Object.assign(p,old);render();msg("Kaydedilemedi: "+error.message,true)}}
+function drawChips(){
+  if(curCat!=="Tümü"&&!CATS.some(c=>c.name===curCat))curCat="Tümü";
+  $("chips").innerHTML=["Tümü",...CATS.map(c=>c.name)].map(c=>`<button class="chip" data-c="${esc(c)}" aria-pressed="${c===curCat}">${esc(c)}</button>`).join("")+(me&&me.role==="admin"?'<button class="chip" data-manage="1">⚙ Kategoriler</button>':"");
+}
+function addr(p){const m=/^\s*([A-Fa-f])(\d{1,2})-[ÇçKk]?(\d)\s*$/.exec(p.loc||"");if(!m)return null;const L=m[1].toUpperCase(),n=+m[2],d=+m[3],c=SH[L];return(n>=1&&n<=c.n&&d>=1&&d<=c.d)?{s:L+n,d}:null}
+function renderPlan(){
+  const by={};let free=0;
+  parts.forEach(p=>{const a=addr(p);if(!a){free++;return}(by[a.s]=by[a.s]||[]).push(p)});
+  const h=ISL.map(g=>`<div class="isl" style="flex:${g.length}">`+g.map(L=>{
+    let c=`<div class="col"><div class="hd">${L}</div>`;
+    for(let i=1;i<=SH[L].n;i++){const n=flip?SH[L].n+1-i:i,k=L+n,ps=by[k]||[],st=ps.length?(ps.some(p=>p.qty<=0)?"zero":(ps.some(status)?"low":"ok")):"";
+      c+=`<button class="cell ${st}" data-s="${k}" aria-label="Raf ${k}">${n}</button>`}
+    return c+"</div>"}).join("")+"</div>").join("");
+  $("plan").innerHTML=`<div class="legend"><span><i style="background:#5eead4"></i>Dolu <i style="background:#fcd34d;margin-left:8px"></i>Azalıyor <i style="background:#f87171;margin-left:8px"></i>Bitti</span><button class="ghost" id="flip">↕ Yönü çevir</button></div><div class="fl">${h}</div><p class="muted">${free?free+" parçanın plandaki yeri yok. Bir rafa dokunup yerleştirebilirsin.":"Tüm parçalar plana yerleşmiş."}</p>`;
+}
+function drawShelf(){
+  const c=SH[selS[0]],free=parts.filter(p=>!addr(p));let h="";
+  for(let d=1;d<=c.d;d++){const loc=selS+"-"+d,ps=parts.filter(p=>{const a=addr(p);return a&&a.s===selS&&a.d===d});
+    h+=`<div><h3 class="dh">${d}. kat</h3>`+(ps.length?ps.map(p=>{const s=status(p);
+      return `<div class="srow"><div><b>${esc(p.name)}</b>${s?` <span class="tag ${s}">${s==="zero"?"Bitti":"Azalıyor"}</span>`:""}<p class="meta">${esc(p.unit||"adet")}</p></div><div class="qty"><button class="sq" data-d="-1" data-id="${p.id}" aria-label="Stoktan düş">−</button><b>${p.qty}</b><button class="sq" data-d="1" data-id="${p.id}" aria-label="Stok ekle">+</button></div><button class="ghost" data-out="${p.id}">Çıkar</button></div>`}).join(""):'<p class="meta">Boş</p>')+
+    `<div class="crow" style="margin-top:8px"><select data-put="${loc}"><option value="">Mevcut parçayı yerleştir…</option>${free.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join("")}</select><button class="ghost" data-new="${loc}">+ Yeni</button></div></div>`}
+  $("sh-t").textContent="Raf "+selS;$("sh-b").innerHTML=h;
+}
+$("plan").onclick=e=>{if(e.target.closest("#flip")){flip=!flip;renderPlan();return}const b=e.target.closest(".cell");if(b){selS=b.dataset.s;drawShelf();$("shelfsheet").classList.add("open")}};
+$("sh-close").onclick=()=>$("shelfsheet").classList.remove("open");
+$("shelfsheet").onclick=e=>{if(e.target===$("shelfsheet"))$("shelfsheet").classList.remove("open")};
+$("sh-b").onclick=async e=>{const b=e.target.closest("button");if(!b)return;
+  if(b.dataset.d)await adj(+b.dataset.id,+b.dataset.d);
+  else if(b.dataset.out)await upd(+b.dataset.out,{loc:""});
+  else if(b.dataset.new){$("shelfsheet").classList.remove("open");openSheet(null,b.dataset.new);return}
+  else return;drawShelf()};
+$("sh-b").onchange=async e=>{const l=e.target.dataset.put;if(!l||!e.target.value)return;await upd(+e.target.value,{loc:l});drawShelf();msg("Parça "+l+" konumuna yerleştirildi")};
+
+function renderAlerts(){
+  const low=parts.filter(p=>p.qty<LIM).sort((a,b)=>a.qty-b.qty);
+  $("bdg").textContent=low.length?"("+low.length+")":"";
+  $("alerts").innerHTML=`<label style="grid-template-columns:1fr 100px;align-items:center">Bildirim limiti: bu sayının altına düşenler<input id="lim" type="number" inputmode="numeric" min="1" value="${LIM}"></label><p class="muted">${low.length} parça ${LIM} adedin altında</p>`+
+  (low.length?low.map(p=>`<button class="arow ${p.qty<=0?"zero":"low"}" data-id="${p.id}"><div><b>${esc(p.name)}${p.qty<=0?" · Stok bitti":""}</b><p class="meta">${esc(p.loc||"Konumsuz")}${p.cat?" · "+esc(p.cat):""}</p></div><div class="aq"><b>${p.qty}</b><span>${esc(p.unit||"adet")}</span></div></button>`).join(""):`<div class="empty">Tüm parçalar ${LIM} ve üzerinde. Bildirim yok.</div>`);
+}
+$("alerts").onclick=e=>{const b=e.target.closest(".arow");if(b)openSheet(+b.dataset.id)};
+$("alerts").onchange=e=>{if(e.target.id!=="lim")return;LIM=Math.max(1,+e.target.value||100);try{localStorage.setItem("stok-lim",LIM)}catch(x){}renderAlerts()};
+
+function setTab(t){tab=t;["list","plan","alerts"].forEach(x=>$(x).hidden=x!==t);$("q").hidden=$("chips").hidden=t!=="list";
+  document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.tab===t));window.scrollTo(0,0)}
+document.querySelector(".tabs").onclick=e=>{const b=e.target.closest("button");if(b)setTab(b.dataset.tab)};
+
+$("chips").onclick=e=>{const b=e.target.closest("button");if(!b)return;if(b.dataset.manage){drawCatMgr();$("catsheet").classList.add("open");return}curCat=b.dataset.c;render()};
+function drawCatMgr(){$("catlist").innerHTML=CATS.length?CATS.map(c=>`<div class="crow"><input value="${esc(c.name)}" data-id="${c.id}" data-old="${esc(c.name)}" aria-label="Kategori adı"><button class="ghost" data-del="${c.id}" style="color:var(--bad)">Sil</button></div>`).join(""):'<p class="muted">Henüz kategori yok.</p>'}
+$("addcat").onclick=async()=>{const v=$("newcat").value.trim();if(!v)return;const r=await sb.from("categories").insert({name:v});
+  if(r.error){msg(r.error.message.includes("duplicate")?"Bu kategori zaten var":r.error.message,true);return}$("newcat").value="";await loadCats();drawCatMgr();render()};
+$("catlist").onchange=async e=>{const i=e.target.dataset.id;if(!i)return;const v=e.target.value.trim(),old=e.target.dataset.old;
+  if(!v||v===old){e.target.value=old;return}
+  const r=await sb.from("categories").update({name:v}).eq("id",i);if(r.error){msg(r.error.message,true);e.target.value=old;return}
+  await sb.from("parts").update({cat:v}).eq("cat",old);await load();drawCatMgr()};
+$("catlist").onclick=async e=>{const b=e.target.closest("[data-del]");if(!b)return;const c=CATS.find(x=>x.id==b.dataset.del);if(!c)return;
+  await sb.from("parts").update({cat:""}).eq("cat",c.name);const r=await sb.from("categories").delete().eq("id",c.id);
+  if(r.error)msg(r.error.message,true);await load();drawCatMgr()};
+$("cat-close").onclick=()=>$("catsheet").classList.remove("open");
+$("catsheet").onclick=e=>{if(e.target===$("catsheet"))$("catsheet").classList.remove("open")};
 
 (async()=>{
   if(typeof supabase==="undefined"){show("auth");msg("Supabase kütüphanesi yüklenemedi. İnternet bağlantını kontrol et.",true);return}
