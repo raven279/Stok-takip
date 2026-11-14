@@ -75,13 +75,32 @@ label{display:grid;gap:5px;font-size:13px;font-weight:500;color:var(--mute)}
 .fabs{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0));display:flex;gap:10px;z-index:6}
 .fabs .fab{position:static}
 .fabs .alt{background:var(--card);color:var(--ink);border:1px solid var(--line);box-shadow:var(--sh)}
+.tabs button{font-size:13px}
+.lab{display:inline-block;font-size:12px;font-weight:700;border-radius:999px;padding:3px 11px;margin-top:8px;letter-spacing:.02em}
+.lab.firma{background:var(--soft);color:var(--acc)}.lab.kargo{background:var(--warn-bg);color:var(--warn)}
+.lab.genel{background:color-mix(in srgb,var(--mute) 14%,transparent);color:var(--mute)}
+.seg{display:flex;gap:2px;background:color-mix(in srgb,var(--mute) 14%,transparent);border-radius:12px;padding:3px}
+.seg button{flex:1;border:0;background:none;color:var(--mute);font-weight:500;padding:9px 4px;border-radius:9px}
+.seg button[aria-pressed="true"]{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(16,24,40,.14)}
+.sugg{background:var(--soft);border:1px solid var(--acc);border-radius:14px;padding:12px 14px}
+.sugg b{font-size:24px;letter-spacing:-.02em;display:block;margin-top:2px}
+.labelbox{border:3px solid #000;border-radius:14px;padding:22px 16px;text-align:center;background:#fff;color:#000}
+.labelbox .big{font-size:36px;font-weight:800;line-height:1.1;margin:8px 0;overflow-wrap:anywhere}
+@media print{body>*{display:none!important}body>#labelsheet{display:block!important;position:static;background:none}#labelsheet .panel{box-shadow:none;padding:0;max-height:none;background:#fff}#labelsheet .panel::before{display:none}.noprint{display:none!important}}
+.fabs{left:16px;right:auto;gap:12px}
+.fabs .fab{width:58px;height:58px;padding:0;display:grid;place-items:center;border-radius:50%}
+.fabs .fab svg{display:block}
+.brandlogo{height:34px;width:auto;max-width:160px;background:#fff;border-radius:10px;padding:4px 10px;object-fit:contain;display:block}
+.brandlogo.big{height:58px;max-width:230px;margin:0 auto;padding:6px 14px;box-shadow:var(--sh)}
+.top h1{display:block}.top h1::before{display:none}
+.top .muted{margin:5px 0 0}
 </style>
 <script>try{var _t=localStorage.getItem("stok-theme");if(_t)document.documentElement.dataset.theme=_t}catch(e){}</script>
 </head>
 <body>
 
 <section id="auth" hidden><div class="wrap"><div class="box">
-  <div class="logo"></div>
+  <img class="brandlogo big" src="https://cdn.myikas.com/images/theme-images/234dc047-ba49-4636-9e68-3bb2f91c7ac0/image_3840.webp" alt="Bimama" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span style="display:none;font-size:22px;font-weight:700">Bimama</span>
   <h1>Stok Takip</h1>
   <h2 id="ttl">Giriş yap</h2>
   <input id="em" type="email" placeholder="E-posta" autocomplete="username">
@@ -99,16 +118,17 @@ label{display:grid;gap:5px;font-size:13px;font-weight:500;color:var(--mute)}
 
 <section id="app" hidden>
   <header>
-    <div class="top"><div><h1>Stok Takip</h1><p class="muted" id="role"></p></div>
+    <div class="top"><div><h1><img class="brandlogo" src="https://cdn.myikas.com/images/theme-images/234dc047-ba49-4636-9e68-3bb2f91c7ac0/image_3840.webp" alt="Bimama" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span style="display:none;font-size:22px;font-weight:700">Bimama</span></h1><p class="muted" id="role"></p></div>
       <div class="acts"><button class="ghost" id="usersBtn" hidden>Kullanıcılar</button><button class="ghost" id="theme" aria-label="Gece modu" style="padding:7px 11px">🌙</button><button class="ghost" id="out2">Çıkış</button></div></div>
-    <div class="tabs"><button data-tab="list" aria-pressed="true">Liste</button><button data-tab="plan" aria-pressed="false">Depo planı</button><button data-tab="alerts" aria-pressed="false">Bildirimler <span id="bdg"></span></button></div>
+    <div class="tabs"><button data-tab="list" aria-pressed="true">Liste</button><button data-tab="plan" aria-pressed="false">Depo planı</button><button data-tab="pallets" aria-pressed="false">Paletler</button><button data-tab="alerts" aria-pressed="false">Bildirimler <span id="bdg"></span></button></div>
     <input id="q" type="search" placeholder="Parça, kategori, konum veya barkod ara" aria-label="Ara">
     <div class="chips" id="chips"></div>
   </header>
   <main id="list"></main>
   <main id="plan" hidden></main>
   <main id="alerts" hidden></main>
-  <div class="fabs"><button class="fab alt" id="add">+ Parça</button><button class="fab" id="scan">Barkod okut</button></div>
+  <main id="pallets" hidden></main>
+  <div class="fabs"><button class="fab" id="add" aria-label="Parça ekle" title="Parça ekle"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button><button class="fab alt" id="scan" aria-label="Barkod okut" title="Barkod okut"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 5v14M6 5v14M9 5v14M13 5v14M16 5v14M19 5v14M21 5v14"/></svg></button></div>
 </section>
 
 <div class="sheet" id="sheet"><div class="panel" role="dialog" aria-modal="true">
@@ -139,6 +159,27 @@ label{display:grid;gap:5px;font-size:13px;font-weight:500;color:var(--mute)}
   <div class="btns"><button id="cat-close" class="ok">Bitti</button></div>
 </div></div>
 
+<div class="sheet" id="psheet"><div class="panel" role="dialog" aria-modal="true" aria-label="Palet girişi">
+  <h2>Palet girişi</h2>
+  <label>Ürün<select id="p-part"></select></label>
+  <div class="row2"><label>Palet adedi<input id="p-qty" type="number" inputmode="numeric" min="1" value="70"></label>
+    <label>Koridor<select id="p-cor"><option>A</option><option>B</option><option selected>C</option><option>D</option><option>E</option><option>F</option></select></label></div>
+  <div><p class="muted" style="margin-bottom:6px">Etiket</p><div class="seg" id="p-seg"><button data-t="firma" aria-pressed="true">Firma</button><button data-t="kargo" aria-pressed="false">Kargo</button><button data-t="genel" aria-pressed="false">Etiketsiz</button></div></div>
+  <label id="p-fwrap">Gönderilecek firma adı<input id="p-firm" list="firms" autocomplete="off" placeholder="Örn. Prosport Katar"></label><datalist id="firms"></datalist>
+  <div class="sugg"><p class="muted">Forklift için yer</p><b id="p-sug">—</b></div>
+  <label>Başka yer seçmek istersen<select id="p-alt"></select></label>
+  <div class="btns"><button id="p-cancel">Vazgeç</button><button id="p-save" class="ok">Yerleştirdim, kaydet</button></div>
+</div></div>
+<div class="sheet" id="labelsheet"><div class="panel" role="dialog" aria-modal="true" aria-label="Etiket">
+  <div id="lab-body"></div>
+  <div class="btns noprint"><button id="lab-close">Kapat</button><button id="lab-print" class="ok">Yazdır</button></div>
+</div></div>
+<div class="sheet" id="zsheet"><div class="panel" role="dialog" aria-modal="true" aria-label="Ekstra bölgeler">
+  <h2>Ekstra bölgeler</h2><div id="zlist" style="display:grid;gap:8px"></div>
+  <div class="crow" id="zadd"><input id="znew" placeholder="Örn. Giriş önü" autocomplete="off"><button class="ghost" id="zok">Ekle</button></div>
+  <p class="muted">Raflarda yer kalmadığında paletler buralara önerilir. Bir bölgeye birden fazla palet konabilir.</p>
+  <div class="btns"><button id="z-close" class="ok">Bitti</button></div>
+</div></div>
 <div class="sheet" id="scanner"><div class="panel" role="dialog" aria-modal="true" aria-label="Barkod okut">
   <h2>Barkod okut</h2>
   <video id="vid" playsinline muted style="width:100%;border-radius:14px;background:#000;max-height:38vh;object-fit:cover;display:none"></video>
@@ -171,15 +212,15 @@ async function enter(user){
   if(error||!data){msg("Profil okunamadı: "+(error?error.message:"kayıt yok"),true);show("auth");return}
   me=data;
   if(me.role==="pending"){$("pmail").textContent=me.email;show("pending");return}
-  $("role").textContent=me.role==="admin"?"Yönetici":"Personel";
+  $("role").textContent="Stok Takip · "+(me.role==="admin"?"Yönetici":"Personel");
   $("usersBtn").hidden=me.role!=="admin";$("b-del").hidden=me.role!=="admin"||!editId;
   show("app");await load();
-  if(!live){live=true;sb.channel("parts-live").on("postgres_changes",{event:"*",schema:"public",table:"parts"},load).subscribe()}
+  if(!live){live=true;sb.channel("parts-live").on("postgres_changes",{event:"*",schema:"public",table:"parts"},load).on("postgres_changes",{event:"*",schema:"public",table:"pallets"},load).subscribe()}
 }
 async function load(){
   const {data,error}=await sb.from("parts").select("*").order("name");
   if(error){msg("Liste alınamadı: "+error.message,true);return}
-  parts=data||[];await loadCats();render();
+  parts=data||[];await loadCats();await loadPal();render();
 }
 function render(){
   extra();
@@ -264,9 +305,9 @@ $("ulist").onchange=async e=>{
 
 let CATS=[],curCat="Tümü",tab="list",selS=null,flip=false,LIM=100;
 try{LIM=+localStorage.getItem("stok-lim")||100}catch(e){}
-const SH={A:{n:38,d:3},B:{n:38,d:3},C:{n:38,d:2},D:{n:38,d:3},E:{n:38,d:3},F:{n:38,d:3}},ISL=[["A"],["B","C"],["D","E"],["F"]];
+const SH={A:{n:38,d:3},B:{n:38,d:3},C:{n:38,d:3},D:{n:38,d:2},E:{n:38,d:3},F:{n:38,d:3}},ISL=[["A"],["B","C"],["D","E"],["F"]];
 async function loadCats(){const {data}=await sb.from("categories").select("*").order("name");CATS=data||[]}
-function extra(){drawChips();renderPlan();renderAlerts()}
+function extra(){drawChips();renderPlan();renderAlerts();renderPallets()}
 function fillSel(cur){const n=CATS.map(c=>c.name);if(cur&&!n.includes(cur))n.push(cur);$("f-cat").innerHTML='<option value="">Kategorisiz</option>'+n.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join("")}
 async function upd(id,o){const p=parts.find(x=>x.id===id);if(!p)return;const old={...p};Object.assign(p,o);render();
   const {error}=await sb.from("parts").update({...o,updated_at:new Date().toISOString()}).eq("id",id);
@@ -278,7 +319,8 @@ function drawChips(){
 function addr(p){const m=/^\s*([A-Fa-f])(\d{1,2})-[ÇçKk]?(\d)\s*$/.exec(p.loc||"");if(!m)return null;const L=m[1].toUpperCase(),n=+m[2],d=+m[3],c=SH[L];return(n>=1&&n<=c.n&&d>=1&&d<=c.d)?{s:L+n,d}:null}
 function renderPlan(){
   const by={};let free=0;
-  parts.forEach(p=>{const a=addr(p);if(!a){free++;return}(by[a.s]=by[a.s]||[]).push(p)});
+  parts.forEach(p=>{const a=addr(p);if(!a){if(!PAL.some(x=>x.part_id===p.id))free++;return}(by[a.s]=by[a.s]||[]).push(p)});
+  PAL.forEach(x=>{const m=/^([A-F]\d+)-\d$/.exec(x.slot);if(m)(by[m[1]]=by[m[1]]||[]).push({qty:1,min:0})});
   const h=ISL.map(g=>`<div class="isl" style="flex:${g.length}">`+g.map(L=>{
     let c=`<div class="col"><div class="hd">${L}</div>`;
     for(let i=1;i<=SH[L].n;i++){const n=flip?SH[L].n+1-i:i,k=L+n,ps=by[k]||[],st=ps.length?(ps.some(p=>p.qty<=0)?"zero":(ps.some(status)?"low":"ok")):"";
@@ -298,6 +340,7 @@ $("plan").onclick=e=>{if(e.target.closest("#flip")){flip=!flip;renderPlan();retu
 $("sh-close").onclick=()=>$("shelfsheet").classList.remove("open");
 $("shelfsheet").onclick=e=>{if(e.target===$("shelfsheet"))$("shelfsheet").classList.remove("open")};
 $("sh-b").onclick=async e=>{const b=e.target.closest("button");if(!b)return;
+  if(b.dataset.lab){showLabel(+b.dataset.lab);return}
   if(b.dataset.d)await adj(+b.dataset.id,+b.dataset.d);
   else if(b.dataset.out)await upd(+b.dataset.out,{loc:""});
   else if(b.dataset.new){$("shelfsheet").classList.remove("open");openSheet(null,b.dataset.new);return}
@@ -313,7 +356,7 @@ function renderAlerts(){
 $("alerts").onclick=e=>{const b=e.target.closest(".arow");if(b)openSheet(+b.dataset.id)};
 $("alerts").onchange=e=>{if(e.target.id!=="lim")return;LIM=Math.max(1,+e.target.value||100);try{localStorage.setItem("stok-lim",LIM)}catch(x){}renderAlerts()};
 
-function setTab(t){tab=t;["list","plan","alerts"].forEach(x=>$(x).hidden=x!==t);$("q").hidden=$("chips").hidden=t!=="list";
+function setTab(t){tab=t;["list","plan","pallets","alerts"].forEach(x=>$(x).hidden=x!==t);$("q").hidden=$("chips").hidden=t!=="list";
   document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.tab===t));window.scrollTo(0,0)}
 document.querySelector(".tabs").onclick=e=>{const b=e.target.closest("button");if(b)setTab(b.dataset.tab)};
 
@@ -365,6 +408,77 @@ $("s-file").onchange=function(){readPhoto(this)};$("s-file2").onchange=function(
 $("s-close").onclick=stopScan;$("s-ok").onclick=()=>handleCode($("s-code").value);
 $("s-code").onkeydown=e=>{if(e.key==="Enter")$("s-ok").click()};
 $("scanner").onclick=e=>{if(e.target===$("scanner"))stopScan()};
+let PAL=[],ZONES=[],pType="firma";
+async function loadPal(){const a=await sb.from("pallets").select("*").order("created_at",{ascending:false});PAL=a.error?[]:(a.data||[]);
+  const z=await sb.from("extra_zones").select("*").order("name");ZONES=z.error?[]:(z.data||[])}
+const pn=id=>{const p=parts.find(x=>x.id===id);return p?p.name:"?"};
+const slotTxt=s=>s.startsWith("EKSTRA:")?"Ekstra: "+s.slice(7):s.replace(/^([A-F]\d+)-(\d)$/,"$1 · $2. kat");
+function labHTML(x){return x.label_type==="kargo"?'<span class="lab kargo">KARGO</span>':x.label_type==="firma"?'<span class="lab firma">'+esc(x.label_name)+'</span>':'<span class="lab genel">Etiketsiz</span>'}
+function occupied(){const o=new Set(PAL.filter(x=>!x.slot.startsWith("EKSTRA:")).map(x=>x.slot));parts.forEach(p=>{const a=addr(p);if(a)o.add(a.s+"-"+a.d)});return o}
+function candidates(L,type,name){
+  const c=SH[L],occ=occupied(),dir=type==="genel"?-1:1,order=[];
+  for(let f=1;f<=c.d;f++)for(let i=0;i<c.n;i++)order.push({n:dir>0?i+1:c.n-i,f});
+  let list=order.filter(o=>!occ.has(L+o.n+"-"+o.f));
+  if(type!=="genel"){
+    const same=PAL.filter(x=>x.label_type===type&&(type==="kargo"||x.label_name.toLowerCase()===name.toLowerCase())&&x.slot.startsWith(L)).map(x=>{const m=/^[A-F](\d+)-(\d)$/.exec(x.slot);return m?{n:+m[1],f:+m[2]}:null}).filter(Boolean);
+    if(same.length){const d=o=>Math.min(...same.map(s=>Math.abs(s.n-o.n)+(s.f===o.f?0:100)));list=list.slice().sort((a,b)=>d(a)-d(b))}
+  }
+  return list.map(o=>L+o.n+"-"+o.f)}
+function sync(){const o=$("p-alt").selectedOptions[0];$("p-sug").textContent=o?o.textContent:"Yer yok, ekstra bölge tanımla"}
+function fillSug(){
+  const list=candidates($("p-cor").value,pType,$("p-firm").value.trim());
+  const opts=list.slice(0,12).map(x=>[x,slotTxt(x)]).concat(ZONES.map(z=>["EKSTRA:"+z.name,"Ekstra: "+z.name]));
+  $("p-alt").innerHTML=opts.map(o=>`<option value="${esc(o[0])}">${esc(o[1])}</option>`).join("");$("p-alt").selectedIndex=0;sync()}
+function setType(t){pType=t;document.querySelectorAll("#p-seg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.t===t));$("p-fwrap").hidden=t!=="firma";fillSug()}
+function openPal(){
+  if(!parts.length){msg("Önce stok listesine ürün ekle",true);return}
+  $("p-part").innerHTML=parts.slice().sort((a,b)=>a.name.localeCompare(b.name,"tr")).map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join("");
+  $("p-qty").value=70;$("p-firm").value="";try{$("p-cor").value=localStorage.getItem("stok-cor")||"C"}catch(e){}
+  $("firms").innerHTML=[...new Set(PAL.filter(x=>x.label_type==="firma").map(x=>x.label_name))].map(n=>`<option value="${esc(n)}">`).join("");
+  setType("firma");$("psheet").classList.add("open")}
+$("p-seg").onclick=e=>{const b=e.target.closest("button");if(b)setType(b.dataset.t)};
+$("p-cor").onchange=fillSug;$("p-firm").oninput=fillSug;$("p-alt").onchange=sync;
+$("p-cancel").onclick=()=>$("psheet").classList.remove("open");
+$("psheet").onclick=e=>{if(e.target===$("psheet"))$("psheet").classList.remove("open")};
+$("p-save").onclick=async()=>{
+  const part=+$("p-part").value,qty=parseInt($("p-qty").value)||0,slot=$("p-alt").value,name=$("p-firm").value.trim();
+  if(!part||qty<1){msg("Ürün ve adet gir",true);return}
+  if(!slot){msg("Boş yer yok. Ekstra bölge tanımla",true);return}
+  if(pType==="firma"&&!name){$("p-firm").focus();msg("Firma adını yaz",true);return}
+  const {error}=await sb.rpc("add_pallet",{p_part:part,p_qty:qty,p_slot:slot,p_type:pType,p_name:pType==="firma"?name:""});
+  if(error){const dup=/duplicate|pallets_slot_uniq/.test(error.message);msg(dup?"Bu yer az önce doldu. Yeni yer hesaplandı":error.message,true);await load();fillSug();return}
+  try{localStorage.setItem("stok-cor",$("p-cor").value)}catch(e){}
+  $("psheet").classList.remove("open");await load();msg("Palet kaydedildi: "+slotTxt(slot));
+};
+function renderPallets(){
+  $("pallets").innerHTML='<div class="crow"><button class="pri" id="p-new">+ Palet girişi</button><button class="ghost" id="p-zones">⚙ Ekstra bölgeler</button></div>'+
+  (PAL.length?PAL.map(x=>`<div class="part"><div class="info"><p class="name">${esc(pn(x.part_id))}</p><p class="meta">${x.qty} adet · ${esc(slotTxt(x.slot))}</p>${labHTML(x)}</div><div style="display:grid;gap:6px"><button class="ghost" data-lab="${x.id}">Etiket</button><button class="ghost" data-pout="${x.id}" style="color:var(--bad)">Çıkış</button></div></div>`).join(""):'<div class="empty">Henüz palet yok. “Palet girişi” ile üretimden gelen paleti ekle.</div>')}
+$("pallets").onclick=async e=>{const b=e.target.closest("button");if(!b)return;
+  if(b.id==="p-new")openPal();
+  else if(b.id==="p-zones"){drawZones();$("zsheet").classList.add("open")}
+  else if(b.dataset.lab)showLabel(+b.dataset.lab);
+  else if(b.dataset.pout){const x=PAL.find(y=>y.id==b.dataset.pout);if(!x||!confirm(pn(x.part_id)+" paleti ("+x.qty+" adet) çıkışı yapılsın mı? Stoktan düşer."))return;
+    const {error}=await sb.rpc("remove_pallet",{p_id:x.id});if(error){msg(error.message,true);return}await load();msg("Palet çıkışı yapıldı")}};
+function showLabel(id){const x=PAL.find(y=>y.id===id);if(!x)return;
+  const t=x.label_type==="kargo"?"KARGO":x.label_type==="firma"?esc(x.label_name):"STOK";
+  $("lab-body").innerHTML=`<div class="labelbox"><div style="font-size:15px">${esc(pn(x.part_id))}</div><div class="big">${t}</div><div style="font-size:24px;font-weight:700">${x.qty} adet</div><div style="margin-top:10px;font-size:18px">Yer: ${esc(slotTxt(x.slot))}</div></div>`;
+  $("labelsheet").classList.add("open")}
+$("lab-close").onclick=()=>$("labelsheet").classList.remove("open");
+$("lab-print").onclick=()=>window.print();
+$("labelsheet").onclick=e=>{if(e.target===$("labelsheet"))$("labelsheet").classList.remove("open")};
+function drawZones(){const adm=me&&me.role==="admin";
+  $("zlist").innerHTML=ZONES.length?ZONES.map(z=>`<div class="crow" style="align-items:center"><span>${esc(z.name)}</span>${adm?`<button class="ghost" data-zdel="${z.id}" style="color:var(--bad)">Sil</button>`:""}</div>`).join(""):'<p class="muted">Henüz ekstra bölge yok.</p>';
+  $("zadd").hidden=!adm}
+$("zok").onclick=async()=>{const v=$("znew").value.trim();if(!v)return;const r=await sb.from("extra_zones").insert({name:v});
+  if(r.error){msg(/duplicate/.test(r.error.message)?"Bu bölge zaten var":r.error.message,true);return}$("znew").value="";await loadPal();drawZones();render()};
+$("zlist").onclick=async e=>{const b=e.target.closest("[data-zdel]");if(!b)return;const z=ZONES.find(x=>x.id==b.dataset.zdel);if(!z)return;
+  if(PAL.some(x=>x.slot==="EKSTRA:"+z.name)){msg("Bu bölgede palet var, önce çıkışını yap",true);return}
+  const r=await sb.from("extra_zones").delete().eq("id",z.id);if(r.error){msg(r.error.message,true);return}await loadPal();drawZones();render()};
+$("z-close").onclick=()=>$("zsheet").classList.remove("open");
+$("zsheet").onclick=e=>{if(e.target===$("zsheet"))$("zsheet").classList.remove("open")};
+const _ds=drawShelf;
+drawShelf=function(){_ds();const r=PAL.filter(x=>x.slot.startsWith(selS+"-"));
+  if(r.length)$("sh-b").insertAdjacentHTML("afterbegin",'<div><h3 class="dh">Paletler</h3>'+r.map(x=>`<div class="srow"><div><b>${esc(pn(x.part_id))}</b><p class="meta">${x.qty} adet · ${esc(slotTxt(x.slot))}</p>${labHTML(x)}</div><span></span><button class="ghost" data-lab="${x.id}">Etiket</button></div>`).join("")+'</div>')};
 function isDark(){const t=document.documentElement.dataset.theme;return t?t==="dark":matchMedia("(prefers-color-scheme:dark)").matches}
 function themeIcon(){$("theme").textContent=isDark()?"☀️":"🌙"}
 $("theme").onclick=()=>{const t=isDark()?"light":"dark";document.documentElement.dataset.theme=t;try{localStorage.setItem("stok-theme",t)}catch(e){}themeIcon()};
