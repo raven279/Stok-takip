@@ -94,6 +94,11 @@ label{display:grid;gap:5px;font-size:13px;font-weight:500;color:var(--mute)}
 .brandlogo.big{height:58px;max-width:230px;margin:0 auto;padding:6px 14px;box-shadow:var(--sh)}
 .top h1{display:block}.top h1::before{display:none}
 .top .muted{margin:5px 0 0}
+.pres{display:grid;gap:6px;max-height:34vh;overflow-y:auto;margin-top:6px}
+.pitem{display:block;text-align:left;width:100%;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;color:var(--ink)}
+.pitem b{display:block;font-size:14px;font-weight:600}.pitem span{font-size:12px;color:var(--mute)}
+.pchosen{background:var(--soft);border:1px solid var(--acc);border-radius:14px;padding:12px 14px;display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+.pchosen b{font-size:15px}.pchosen .muted{margin:2px 0 0}
 </style>
 <script>try{var _t=localStorage.getItem("stok-theme");if(_t)document.documentElement.dataset.theme=_t}catch(e){}</script>
 </head>
@@ -161,7 +166,13 @@ label{display:grid;gap:5px;font-size:13px;font-weight:500;color:var(--mute)}
 
 <div class="sheet" id="psheet"><div class="panel" role="dialog" aria-modal="true" aria-label="Palet girişi">
   <h2>Palet girişi</h2>
-  <label>Ürün<select id="p-part"></select></label>
+  <div id="p-pwrap">
+    <label>Ürün<input id="p-search" placeholder="Ürün adı, barkod veya kod yaz" autocomplete="off" inputmode="search"></label>
+    <div class="chips" id="p-pchips"></div>
+    <div class="pres" id="p-res"></div>
+  </div>
+  <div class="pchosen" id="p-chosen" hidden></div>
+  <input type="hidden" id="p-part">
   <div class="row2"><label>Palet adedi<input id="p-qty" type="number" inputmode="numeric" min="1" value="70"></label>
     <label>Koridor<select id="p-cor"><option>A</option><option>B</option><option selected>C</option><option>D</option><option>E</option><option>F</option></select></label></div>
   <div><p class="muted" style="margin-bottom:6px">Etiket</p><div class="seg" id="p-seg"><button data-t="firma" aria-pressed="true">Firma</button><button data-t="kargo" aria-pressed="false">Kargo</button><button data-t="genel" aria-pressed="false">Etiketsiz</button></div></div>
@@ -226,8 +237,9 @@ function render(){
   extra();
   const t=$("q").value.toLowerCase().trim();
   const shown=parts.filter(p=>(p.name+" "+p.cat+" "+p.loc+" "+p.code).toLowerCase().includes(t)&&(curCat==="Tümü"||p.cat===curCat));
+  shown.sort(partCmp);
   $("list").innerHTML=shown.length?shown.map(p=>{const s=status(p);
-    return `<div class="part ${s}"><div class="info" data-edit="${p.id}"><p class="name">${esc(p.name)}</p><p class="meta">${esc(p.cat||"Kategorisiz")}${p.loc?" · "+esc(p.loc):""} · ${esc(p.unit||"adet")}${p.code?" · "+esc(p.code):""}</p>${s?`<span class="tag ${s}">${s==="zero"?"Stok bitti":"Azalıyor, limit "+p.min}</span>`:""}</div>
+    return `<div class="part ${s}"><div class="info" data-edit="${p.id}"><p class="name">${esc(p.name)}</p><p class="meta">${esc(p.cat||"Kategorisiz")}${p.loc?" · "+esc(p.loc):""} · ${esc(p.unit||"adet")}${p.code?" · "+esc(p.code):""}${p.sku?" · "+esc(p.sku):""}</p>${p.prep_qty>0?(p.qty<p.prep_qty?`<span class="tag zero">Hazırlanacak ${p.prep_qty} · Eksik ${p.prep_qty-p.qty}</span> `:`<span class="lab genel">Hazırlanacak ${p.prep_qty}</span> `):""}${s?`<span class="tag ${s}">${s==="zero"?"Stok bitti":"Azalıyor, limit "+p.min}</span>`:""}</div>
     <div class="qty"><button class="sq" data-d="-1" data-id="${p.id}" aria-label="Azalt">−</button><b>${p.qty}</b><button class="sq" data-d="1" data-id="${p.id}" aria-label="Artır">+</button></div></div>`}).join(""):
     `<div class="empty">${parts.length?"Aramayla eşleşen parça yok.":"Henüz parça yok. Başlamak için “Parça ekle”ye dokun."}</div>`;
 }
@@ -306,7 +318,7 @@ $("ulist").onchange=async e=>{
 let CATS=[],curCat="Tümü",tab="list",selS=null,flip=false,LIM=100;
 try{LIM=+localStorage.getItem("stok-lim")||100}catch(e){}
 const SH={A:{n:38,d:3},B:{n:38,d:3},C:{n:38,d:3},D:{n:38,d:2},E:{n:38,d:3},F:{n:38,d:3}},ISL=[["A"],["B","C"],["D","E"],["F"]];
-async function loadCats(){const {data}=await sb.from("categories").select("*").order("name");CATS=data||[]}
+async function loadCats(){const {data}=await sb.from("categories").select("*").order("name");CATS=(data||[]).sort((a,b)=>cRank(a.name)-cRank(b.name)||a.name.localeCompare(b.name,"tr"))}
 function extra(){drawChips();renderPlan();renderAlerts();renderPallets()}
 function fillSel(cur){const n=CATS.map(c=>c.name);if(cur&&!n.includes(cur))n.push(cur);$("f-cat").innerHTML='<option value="">Kategorisiz</option>'+n.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join("")}
 async function upd(id,o){const p=parts.find(x=>x.id===id);if(!p)return;const old={...p};Object.assign(p,o);render();
@@ -432,7 +444,7 @@ function fillSug(){
 function setType(t){pType=t;document.querySelectorAll("#p-seg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.t===t));$("p-fwrap").hidden=t!=="firma";fillSug()}
 function openPal(){
   if(!parts.length){msg("Önce stok listesine ürün ekle",true);return}
-  $("p-part").innerHTML=parts.slice().sort((a,b)=>a.name.localeCompare(b.name,"tr")).map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join("");
+  $("p-part").value="";$("p-search").value="";pCat="Tümü";$("p-chosen").hidden=true;$("p-pwrap").hidden=false;drawPicker();
   $("p-qty").value=70;$("p-firm").value="";try{$("p-cor").value=localStorage.getItem("stok-cor")||"C"}catch(e){}
   $("firms").innerHTML=[...new Set(PAL.filter(x=>x.label_type==="firma").map(x=>x.label_name))].map(n=>`<option value="${esc(n)}">`).join("");
   setType("firma");$("psheet").classList.add("open")}
@@ -442,7 +454,8 @@ $("p-cancel").onclick=()=>$("psheet").classList.remove("open");
 $("psheet").onclick=e=>{if(e.target===$("psheet"))$("psheet").classList.remove("open")};
 $("p-save").onclick=async()=>{
   const part=+$("p-part").value,qty=parseInt($("p-qty").value)||0,slot=$("p-alt").value,name=$("p-firm").value.trim();
-  if(!part||qty<1){msg("Ürün ve adet gir",true);return}
+  if(!part){msg("Önce ürünü seç",true);return}
+  if(qty<1){msg("Adedi gir",true);return}
   if(!slot){msg("Boş yer yok. Ekstra bölge tanımla",true);return}
   if(pType==="firma"&&!name){$("p-firm").focus();msg("Firma adını yaz",true);return}
   const {error}=await sb.rpc("add_pallet",{p_part:part,p_qty:qty,p_slot:slot,p_type:pType,p_name:pType==="firma"?name:""});
@@ -479,6 +492,28 @@ $("zsheet").onclick=e=>{if(e.target===$("zsheet"))$("zsheet").classList.remove("
 const _ds=drawShelf;
 drawShelf=function(){_ds();const r=PAL.filter(x=>x.slot.startsWith(selS+"-"));
   if(r.length)$("sh-b").insertAdjacentHTML("afterbegin",'<div><h3 class="dh">Paletler</h3>'+r.map(x=>`<div class="srow"><div><b>${esc(pn(x.part_id))}</b><p class="meta">${x.qty} adet · ${esc(slotTxt(x.slot))}</p>${labHTML(x)}</div><span></span><button class="ghost" data-lab="${x.id}">Etiket</button></div>`).join("")+'</div>')};
+const CORD=["Kuru Kedi Maması","Kuru Köpek Maması","Yaş Kedi Maması","Yaş Köpek Maması","Ödül","Takviye ve Paste","Kuş Yemi","Hijyen"];
+const cRank=c=>{const i=CORD.indexOf(c);return i<0?(c?50:99):i};
+function partCmp(a,b){const w=x=>x.weight_g==null?1e9:x.weight_g;return cRank(a.cat)-cRank(b.cat)||w(a)-w(b)||a.name.localeCompare(b.name,"tr")}
+let pCat="Tümü";
+const nrm=s=>String(s||"").toLocaleLowerCase("tr").replace(/[çğıöşü]/g,m=>({"ç":"c","ğ":"g","ı":"i","ö":"o","ş":"s","ü":"u"}[m]));
+function drawPicker(){
+  $("p-pchips").innerHTML=["Tümü",...CATS.map(c=>c.name)].map(c=>`<button class="chip" data-pc="${esc(c)}" aria-pressed="${c===pCat}">${esc(c)}</button>`).join("");
+  const q=$("p-search").value.trim(),toks=nrm(q).split(/\s+/).filter(Boolean);
+  let list=parts.filter(p=>(pCat==="Tümü"||p.cat===pCat)&&toks.every(t=>nrm(p.name+" "+p.cat+" "+p.code+" "+p.sku).includes(t))).sort(partCmp),head="";
+  if(!q&&pCat==="Tümü"){const rec=[...new Set(PAL.map(x=>x.part_id))].slice(0,5).map(id=>parts.find(p=>p.id===id)).filter(Boolean);if(rec.length){list=rec;head="Son girilenler"}}
+  const total=list.length;list=list.slice(0,8);
+  $("p-res").innerHTML=(head?`<p class="muted">${head}</p>`:"")+(list.length?list.map(p=>`<button class="pitem" data-pid="${p.id}"><b>${esc(p.name)}</b><span>${esc(p.cat||"Kategorisiz")}${p.code?" · "+esc(p.code):""}</span></button>`).join(""):'<p class="muted">Eşleşen ürün yok.</p>')+(total>8?`<p class="muted">${total} üründen 8 tanesi gösteriliyor. Aramayı daraltmak için yaz.</p>`:"");
+}
+function choosePart(id){const p=parts.find(x=>x.id===id);if(!p)return;$("p-part").value=id;
+  $("p-chosen").innerHTML=`<div><b>${esc(p.name)}</b><p class="muted">${esc(p.cat||"Kategorisiz")}${p.code?" · "+esc(p.code):""}</p></div><button class="ghost" id="p-change">Değiştir</button>`;
+  $("p-chosen").hidden=false;$("p-pwrap").hidden=true;
+  const c=p.cat||"";$("p-cor").value=/^Yaş/.test(c)?"D":/^Kuru/.test(c)?"C":"E";
+  fillSug()}
+$("p-search").oninput=drawPicker;
+$("p-res").onclick=e=>{const b=e.target.closest("[data-pid]");if(b)choosePart(+b.dataset.pid)};
+$("p-pchips").onclick=e=>{const b=e.target.closest("[data-pc]");if(b){pCat=b.dataset.pc;drawPicker()}};
+$("p-chosen").onclick=e=>{if(e.target.closest("#p-change")){$("p-part").value="";$("p-chosen").hidden=true;$("p-pwrap").hidden=false;$("p-search").focus()}};
 function isDark(){const t=document.documentElement.dataset.theme;return t?t==="dark":matchMedia("(prefers-color-scheme:dark)").matches}
 function themeIcon(){$("theme").textContent=isDark()?"☀️":"🌙"}
 $("theme").onclick=()=>{const t=isDark()?"light":"dark";document.documentElement.dataset.theme=t;try{localStorage.setItem("stok-theme",t)}catch(e){}themeIcon()};
